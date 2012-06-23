@@ -4,8 +4,8 @@
 #include <map>
 #include <sstream>
 
-string_map Webserver::contenttypes;					// Static string map
-string_map Webserver::statuscodes;					// Static string map
+string_map Webserver::contenttypes;                 // Static string map
+string_map Webserver::statuscodes;                  // Static string map
 
 // ---------- cHandler Constructor --------------------------------------------
 Webserver::cHandler::cHandler(cSocket* s) {
@@ -83,58 +83,57 @@ std::string Webserver::cHandler::parsePath(std::string l) {
     result  = l.substr((start + 1), (stop-start - 1));  // Get PATH
 
     if (result == "/")	result = "index.html";                       // Index
-    else				result = l.substr((start+2),(stop-start-2)); // File
+    else                result = l.substr((start+2),(stop-start-2)); // File
 
     return result;                                      // Return PATH
 }
 
-// --
 // ---------- cHandler: Get content type from PATH ----------------------------
 std::string Webserver::cHandler::parseContentType(std::string p) {
-	std::string temp, type = "";
-	string_map::iterator it;
-	std::string::size_type start, stop = p.length();
+    std::string temp, type = "";
+    string_map::iterator it;
+    std::string::size_type start, stop = p.length();
 
-	start	= p.find_last_of(".");
-	temp	= p.substr(start+1, stop-1);
+    start   = p.find_last_of(".");
+    temp    = p.substr(start+1, stop-1);
 
-	it = Webserver::contenttypes.find(temp);
-	if (it != Webserver::contenttypes.end())	type = it->second;
-	else										type = "application/unknown";
+    it = Webserver::contenttypes.find(temp);
+    if (it != Webserver::contenttypes.end())    type = it->second;
+    else                                        type = "application/unknown";
 
-	return type;
+    return type;
 }
 
 // ---------- cHandler: READ the wanted content data from PATH ----------------
 Webserver::cHandler::Page::Data Webserver::cHandler::readData(std::string f) {
-	cHandler::Page::Data d;				// Temporary Page::Data struct object
-	int end, begin;
+    cHandler::Page::Data d;             // Temporary Page::Data struct object
+    int end, begin;
 
-	d.size		= 0;					// Set size to zero
-	d.content	= NULL;                 // Set content char* to null
+    d.size      = 0;                    // Set size to zero
+    d.content   = NULL;                 // Set content char* to null
 
-	std::ifstream file(f.c_str(), std::ios::binary);	// Create filestream
+    std::ifstream file(f.c_str(), std::ios::binary);    // Create filestream
 
-	if (file) {							// If the file can be opend
-		file.seekg(0, std::ios::beg);	// Seek to start of file
-		begin = (int)file.tellg();		// Get position
+    if (file) {                         // If the file can be opend
+        file.seekg(0, std::ios::beg);   // Seek to start of file
+        begin = (int)file.tellg();      // Get position
 
-		file.seekg(0, std::ios::end);	// Seek to end of file
-		end = (int)file.tellg();		// Get position
-		d.size = (end - begin);			// Calculate file size
-		file.seekg(0, std::ios::beg);	// Seek back to start
+        file.seekg(0, std::ios::end);   // Seek to end of file
+        end = (int)file.tellg();        // Get position
+        d.size = (end - begin);	        // Calculate file size
+        file.seekg(0, std::ios::beg);   // Seek back to start
 
-		d.content = new char[d.size + 1];	// Allocate memory for content
-		file.read(d.content, d.size);		// Read the content from file
-		d.content[d.size] = '\0';			// Terminate the char array
-	}
-	else {
-		// some kind of error message
-	}
-	return d;							// Return the content
+        d.content = new char[d.size + 1];   // Allocate memory for content
+        file.read(d.content, d.size);       // Read the content from file
+        d.content[d.size] = '\0';           // Terminate the char array
+    }
+    else {
+        // some kind of error message
+    }
+    return d;                           // Return the content
 }
 
 // ---------- cHandler: Parse data (dynamic content) --------------------------
 void Webserver::cHandler::parseData(char* d) {
-	// ...
+    // ...
 }
