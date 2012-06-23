@@ -12,8 +12,9 @@ string_map Webserver::statuspages;                  // Static string map
 Webserver::cHandler::cHandler(cSocket* s) {
     std::string line;                               // For holding request
 
-    page.sock_  = s;                                // Set the socket
-    line        = page.sock_->rxLine();             // Receive a line
+    page.data.content   = NULL;                     // Set data content to null
+    page.sock_          = s;                        // Set the socket
+    line                = page.sock_->rxLine();     // Receive a line
 
     if (!line.empty() && line.find("GET") == 0) {   // If GOOD request
         createPage(line);                           // Create a page
@@ -51,8 +52,8 @@ void Webserver::cHandler::sendPage() {
 
 // ---------- Create a Page from GET Request ----------------------------------
 void Webserver::cHandler::createPage(std::string l) {
-    page.path_	= parsePath(l);                 // Set the PATH
-    page.data	= readData(page.path_);         // Get file content
+    page.path_ = parsePath(l);          // Set the PATH
+    readData(page.path_);               // Get file content
 
     if (page.data.content != NULL) {
         page.status_        = "200";
@@ -70,26 +71,9 @@ void Webserver::cHandler::createPage(std::string l) {
             page.status_   = "404";                     // Set to 404
             page.path_     = "404.html";                // Set path
         }
-        page.data         = constData(page.status_);    // Read 404 Page
+        constData(page.status_);                        // Read 404 Page
         page.contentType_ = "text/html";                // Always same
     }
-}
-
-// ---------- Get wanted content data from constant data ----------------------
-Webserver::cHandler::Page::Data Webserver::cHandler::constData(std::string s) {
-    cHandler::Page::Data d;             // Temporary Page::Data struct object
-    string_map::iterator it;
-
-    it = Webserver::statuspages.find(s);
-    if (it != Webserver::statuspages.end()) {
-        d.size = it->second.size();
-        d.content = new char[d.size + 1];
-        strcpy(d.content, it->second.c_str());
-    }
-    else {
-        // Some kind of error 
-    }
-    return d;
 }
 
 // ---------- cHandler: get path from REQUEST ----------------------------------
@@ -124,12 +108,11 @@ std::string Webserver::cHandler::parseContentType(std::string p) {
 }
 
 // ---------- cHandler: READ the wanted content data from PATH ----------------
-Webserver::cHandler::Page::Data Webserver::cHandler::readData(std::string f) {
-    cHandler::Page::Data d;             // Temporary Page::Data struct object
-    int end, begin;
+void Webserver::cHandler::readData(std::string f) {
+    int end, begin;                     // Start and stop of file
 
-    d.size      = 0;                    // Set size to zero
-    d.content   = NULL;                 // Set content char* to null
+    page.data.size      = 0;            // Set size to zero
+    page.data.content   = NULL;         // Set content char* to null
 
     std::ifstream file(f.c_str(), std::ios::binary);    // Create filestream
 
@@ -139,17 +122,38 @@ Webserver::cHandler::Page::Data Webserver::cHandler::readData(std::string f) {
 
         file.seekg(0, std::ios::end);   // Seek to end of file
         end = (int)file.tellg();        // Get position
-        d.size = (end - begin);	        // Calculate file size
+        page.data.size = (end - begin);	// Calculate file size
         file.seekg(0, std::ios::beg);   // Seek back to start
 
-        d.content = new char[d.size + 1];   // Allocate memory for content
-        file.read(d.content, d.size);       // Read the content from file
-        d.content[d.size] = '\0';           // Terminate the char array
+        if (page.data.content != NULL) {        // Delete memory if allready
+            delete [] page.data.content;        // allocated
+        }
+        page.data.content = new char[page.data.size + 1];   // Allocate new mem
+        file.read(page.data.content, page.data.size);       // Read the content
+        page.data.content[page.data.size] = '\0';           // Terminate array
     }
     else {
         // some kind of error message
     }
-    return d;                           // Return the content
+}
+
+// ---------- Get wanted content data from constant data ----------------------
+void Webserver::cHandler::constData(std::string s) {
+    string_map::iterator it;                    // String map itterator
+
+    it = Webserver::statuspages.find(s);        // Try to find wanted status
+    if (it != Webserver::statuspages.end()) {   // If it is not at end of map
+        page.data.size = it->second.size();     // Set content size
+
+        if (page.data.content != NULL) {        // Delete memory if allready
+            delete [] page.data.content;        // allocated
+        }
+        page.data.content = new char[page.data.size + 1];   // Allocate new mem
+        strcpy(page.data.content, it->second.c_str());      // Copy content
+    }
+    else {
+        // Some kind of error
+    }
 }
 
 // ---------- cHandler: Parse data (dynamic content) --------------------------

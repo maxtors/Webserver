@@ -67,8 +67,8 @@ private:
 		// ---------- CHANDLER PRIVATE FUNCTIONS ------------------------------
         std::string parsePath(std::string l);           // Get the wanted PATH
         std::string parseContentType(std::string p);    // Set content type
-        Page::Data  readData(std::string f);            // Read wanted content
-        Page::Data  constData(std::string s);           // Read const data
+        void        readData(std::string f);            // Read wanted content
+        void        constData(std::string s);           // Read const data
         void        createPage(std::string l);          // Create page from REQ
         void        sendPage();                         // Send a page
         void        parseData(char* d);                 // Get requested file
