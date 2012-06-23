@@ -6,6 +6,7 @@
 
 string_map Webserver::contenttypes;                 // Static string map
 string_map Webserver::statuscodes;                  // Static string map
+string_map Webserver::statuspages;                  // Static string map
 
 // ---------- cHandler Constructor --------------------------------------------
 Webserver::cHandler::cHandler(cSocket* s) {
@@ -45,10 +46,7 @@ void Webserver::cHandler::sendPage() {
     page.sock_->txLine("Content-Type: " + page.contentType_ + "\r");
     page.sock_->txLine("Content-Length: " + ss_size.str() + "\r");
     page.sock_->txLine("\r");
-
-    if (page.status_ != "204 No Content") {
-        page.sock_->txData(page.data.content, page.data.size);
-    }
+    page.sock_->txData(page.data.content, page.data.size);
 }
 
 // ---------- Create a Page from GET Request ----------------------------------
@@ -69,12 +67,29 @@ void Webserver::cHandler::createPage(std::string l) {
             page.status_    = "204";                // No Content
         }
         else {
-            page.status_    = "404";                // Set to 404
-            page.path_      = "404.html";           // Set path
-            page.data       = readData(page.path_); // Read 404 Page
+            page.status_   = "404";                     // Set to 404
+            page.path_     = "404.html";                // Set path
         }
-        page.contentType_   = "text/html";          // Content allways same...
+        page.data         = constData(page.status_);    // Read 404 Page
+        page.contentType_ = "text/html";                // Always same
     }
+}
+
+// ---------- Get wanted content data from constant data ----------------------
+Webserver::cHandler::Page::Data Webserver::cHandler::constData(std::string s) {
+    cHandler::Page::Data d;             // Temporary Page::Data struct object
+    string_map::iterator it;
+
+    it = Webserver::statuspages.find(s);
+    if (it != Webserver::statuspages.end()) {
+        d.size = it->second.size();
+        d.content = new char[d.size + 1];
+        strcpy(d.content, it->second.c_str());
+    }
+    else {
+        // Some kind of error 
+    }
+    return d;
 }
 
 // ---------- cHandler: get path from REQUEST ----------------------------------
