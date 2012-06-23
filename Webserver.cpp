@@ -7,8 +7,8 @@
 Webserver::Webserver(short port) {
 
 	try {
-		contenttypes = readMap("contenttypes.dta");	// Read the content types
-		if (contenttypes.empty()) {					// If nothing found / read
+		contenttypes = readMap("config/contenttypes.dta");	// read data
+		if (contenttypes.empty()) {							// If empty
 			throw "MISSING CONTENTTYPES";
 		}
 

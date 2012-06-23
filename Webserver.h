@@ -47,6 +47,10 @@ private:
 	class cHandler {
 	private:
 
+		enum Status {
+
+		} status;
+
 		// ---------- PAGE STRUCT ---------------------------------------------
 		struct Page {
 			cSocket*	sock_;						// The connected cSocket
