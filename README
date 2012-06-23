@@ -1,0 +1,25 @@
+[Webserver] - The most unoriginal name for a webserver program!
+
+This software is just simple, a small webserver for hosting files and 
+html content over HTTP. The language used is C++, and for socket networking
+the Windows Socket API is used.
+
+A few changes are going to be made in the close future:
+- The parsing of the content type is to static (will be changed)
+
+- A "routes" function will be added (inspired by ruby on rails) so that
+	the user of this program can manualy route URL's to his/her wanted
+	html file. Ex: /hello/about is routed to the /about.html file.
+
+- The handelig of "is this a good request?" part, and the status-codes
+	that are given is a little to static and maybe not flexible enough.
+
+And also, as an "way out there in the future" i would like to be able
+to add support for a really simple "dynamic content" system. Say for
+example that the user can write something like <% variable_name %> in
+the HTML code, and get the webserver to replace that with an actuall variable.
+And maybe even a SQLlite interface could be made.
+
+Well all in all, this code is a fun project to learn about, windows network
+programming, HTTP, and further down the line: SQLlite and handelig dynamic
+content.
