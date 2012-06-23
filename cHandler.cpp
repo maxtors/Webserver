@@ -9,85 +9,86 @@ string_map Webserver::statuscodes;					// Static string map
 
 // ---------- cHandler Constructor --------------------------------------------
 Webserver::cHandler::cHandler(cSocket* s) {
-	std::string line;								// For holding request
+    std::string line;                               // For holding request
 
-	page.sock_	= s;								// Set the socket
-	line		= page.sock_->rxLine();				// Receive a line
+    page.sock_  = s;                                // Set the socket
+    line        = page.sock_->rxLine();             // Receive a line
 
-	if (!line.empty() && line.find("GET") == 0) {	// If GOOD request
-		createPage(line);							// Create a page
+    if (!line.empty() && line.find("GET") == 0) {   // If GOOD request
+        createPage(line);                           // Create a page
 
-		std::cout << "[" << page.status_ << "] - "	// Show some information
-				  << page.path_ << " ("				// about response
-				  << page.contentType_ << ")\n";
+        std::cout << "[" << page.status_ << "] - "  // Show some information
+                  << page.path_ << " ("             // about response
+                  << page.contentType_ << ")\n";
 
-		sendPage();									// Send the page
-	}
-	else {											// If BAD request
-		// send some kind of error message
-	}
+        sendPage();                                 // Send the page
+    }
+    else {                                          // If BAD request
+        // send some kind of error message
+    }
 }
 
 // ---------- cHandler Deconstructor ------------------------------------------
 Webserver::cHandler::~cHandler() {
-	delete [] page.data.content;					// Delete allocated content
+    delete [] page.data.content;                    // Delete allocated content
 }
 
 // ---------- Send a finnished page to the client -----------------------------
 void Webserver::cHandler::sendPage() {
-	std::stringstream ss_size;						// Stringstream
-	ss_size << page.data.size;						// Size(int) to string
+    std::stringstream ss_size;                      // Stringstream
+    ss_size << page.data.size;                      // Size(int) to string
 
-	// Transmit the header (status, connection, type, length)
-	// Then transmit the data itself...
-	page.sock_->txLine(Webserver::statuscodes[page.status_] + "\r");
-	page.sock_->txLine("Connection: close\r");
-	page.sock_->txLine("Content-Type: " + page.contentType_ + "\r");
-	page.sock_->txLine("Content-Length: " + ss_size.str() + "\r");
-	page.sock_->txLine("\r");
+    // Transmit the header (status, connection, type, length)
+    // Then transmit the data itself...
+    page.sock_->txLine(Webserver::statuscodes[page.status_] + "\r");
+    page.sock_->txLine("Connection: close\r");
+    page.sock_->txLine("Content-Type: " + page.contentType_ + "\r");
+    page.sock_->txLine("Content-Length: " + ss_size.str() + "\r");
+    page.sock_->txLine("\r");
 
-	if (page.status_ != "204 No Content") {
-		page.sock_->txData(page.data.content, page.data.size);
-	}
+    if (page.status_ != "204 No Content") {
+        page.sock_->txData(page.data.content, page.data.size);
+    }
 }
 
 // ---------- Create a Page from GET Request ----------------------------------
 void Webserver::cHandler::createPage(std::string l) {
-	page.path_	= parsePath(l);					// Set the PATH
-	page.data	= readData(page.path_);			// Get file content
+    page.path_	= parsePath(l);                 // Set the PATH
+    page.data	= readData(page.path_);         // Get file content
 
-	if (page.data.content == NULL) {				// IF no data read
-		if (page.path_ == "favicon.ico") {			// If request for favicon
-			page.status_	= "204";				// No Content
-		}
-		else {
-			page.status_	= "404";				// Set to 404
-			page.path_		= "404.html";			// Set path
-			page.data		= readData(page.path_);	// Read 404 Page
-		}
-		page.contentType_	= "text/html";			// Content allways same...
-	}
-	else {
-		page.status_		= "200";						// Set to OK
-		page.contentType_	= parseContentType(page.path_);	// Content type
+    if (page.data.content == NULL) {                // IF no data read
+        if (page.path_ == "favicon.ico") {          // If request for favicon
+            page.status_    = "204";                // No Content
+        }
+        else {
+            page.status_    = "404";                // Set to 404
+            page.path_      = "404.html";           // Set path
+            page.data       = readData(page.path_); // Read 404 Page
+        }
+        page.contentType_   = "text/html";          // Content allways same...
+    }
+    else {
+        page.status_        = "200";                // Set to OK
+        page.contentType_   = parseContentType(page.path_);	// Content type
 	}
 }
 
 // ---------- cHandler: get path from REQUEST ----------------------------------
 std::string Webserver::cHandler::parsePath(std::string l) {
-	std::string::size_type start, stop;
-	std::string result;
+    std::string::size_type start, stop;
+    std::string result;
 
-	start	= l.find_first_of(" ");						// Start PATH
-	stop	= l.find(" ", start + 1);					// End of PATH
-	result	= l.substr((start + 1), (stop-start - 1));	// Get PATH
+    start   = l.find_first_of(" ");                     // Start PATH
+    stop    = l.find(" ", start + 1);                   // End of PATH
+    result  = l.substr((start + 1), (stop-start - 1));  // Get PATH
 
-	if (result == "/")	result = "index.html";						 // Index
-	else				result = l.substr((start+2),(stop-start-2)); // File
+    if (result == "/")	result = "index.html";                       // Index
+    else				result = l.substr((start+2),(stop-start-2)); // File
 
-	return result;												// Return PATH
+    return result;                                      // Return PATH
 }
 
+// --
 // ---------- cHandler: Get content type from PATH ----------------------------
 std::string Webserver::cHandler::parseContentType(std::string p) {
 	std::string temp, type = "";
@@ -110,7 +111,7 @@ Webserver::cHandler::Page::Data Webserver::cHandler::readData(std::string f) {
 	int end, begin;
 
 	d.size		= 0;					// Set size to zero
-	d.content	= NULL;					// Set content char* to null
+	d.content	= NULL;                 // Set content char* to null
 
 	std::ifstream file(f.c_str(), std::ios::binary);	// Create filestream
 
