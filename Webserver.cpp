@@ -7,9 +7,14 @@
 Webserver::Webserver(short port) {
 
 	try {
-		contenttypes = readMap("config/contenttypes.dta");	// read data
+		contenttypes = readMap("config/contenttypes.dta");	// content types
+		statuscodes  = readMap("config/statuscodes.dta");	// status codes
+
 		if (contenttypes.empty()) {							// If empty
 			throw "MISSING CONTENTTYPES";
+		}
+		else if (statuscodes.empty()) {
+			throw "MISSING STATUSCODES";
 		}
 
 		Webserver::startWSA();					// Initiate WSA
@@ -94,12 +99,16 @@ string_map Webserver::readMap(std::string f) {
 	std::ifstream file(f.c_str());			// input file stream object
 
 	if (file) {								// if the file could be open
-		file >> tempKey >> tempItem;		// read key and item
+		file >> tempKey;					// Read the key value
+		std::getline(file, tempItem, '\n');	// Read the item value
+		tempItem = tempItem.substr(1, tempItem.length() - 1);
 		while (!file.eof()) {
 
 			// Add the found pair (key, item) to the "vars" string map
 			vars.insert(std::pair<std::string, std::string>(tempKey,tempItem));
-			file >> tempKey >> tempItem;	// read next key and item
+			file >> tempKey;					// Read the key value
+			std::getline(file, tempItem, '\n');	// Read the item value
+			tempItem = tempItem.substr(1, tempItem.length() - 1);
 		}
 	}
 	return vars;							// return map

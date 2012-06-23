@@ -18,6 +18,7 @@ typedef std::map<std::string, std::string> string_map;
 class Webserver {
 private:
 	static string_map contenttypes;		// Different content types
+	static string_map statuscodes;		// Different status codes
 	SOCKET sock_;						// The servers SOCKET
 
 	// ---------- WEBSERVER STATIC FUNCTIONS -------------------------------
@@ -46,10 +47,6 @@ private:
 	// ---------- CHANDLER CLASS ----------------------------------------------
 	class cHandler {
 	private:
-
-		enum Status {
-
-		} status;
 
 		// ---------- PAGE STRUCT ---------------------------------------------
 		struct Page {

@@ -5,6 +5,7 @@
 #include <sstream>
 
 string_map Webserver::contenttypes;					// Static string map
+string_map Webserver::statuscodes;					// Static string map
 
 // ---------- cHandler Constructor --------------------------------------------
 Webserver::cHandler::cHandler(cSocket* s) {
@@ -39,7 +40,7 @@ void Webserver::cHandler::sendPage() {
 
 	// Transmit the header (status, connection, type, length)
 	// Then transmit the data itself...
-	page.sock_->txLine("HTTP/1.1 " + page.status_ + "\r");
+	page.sock_->txLine(Webserver::statuscodes[page.status_] + "\r");
 	page.sock_->txLine("Connection: close\r");
 	page.sock_->txLine("Content-Type: " + page.contentType_ + "\r");
 	page.sock_->txLine("Content-Length: " + ss_size.str() + "\r");
@@ -52,23 +53,22 @@ void Webserver::cHandler::sendPage() {
 
 // ---------- Create a Page from GET Request ----------------------------------
 void Webserver::cHandler::createPage(std::string l) {
-	page.path_			= parsePath(l);					// Set the PATH
-	page.data			= readData(page.path_);			// Get file content
+	page.path_	= parsePath(l);					// Set the PATH
+	page.data	= readData(page.path_);			// Get file content
 
-	if (page.data.content == NULL) {					// IF no data read
-		if (page.path_ == "favicon.ico") {
-			page.status_	= "204 No Content";
+	if (page.data.content == NULL) {				// IF no data read
+		if (page.path_ == "favicon.ico") {			// If request for favicon
+			page.status_	= "204";				// No Content
 		}
 		else {
-			page.status_	= "404 Not Found";				// Set to 404
-			page.path_		= "404.html";					// Set path
-			page.data		= readData(page.path_);			// Read 404 Page
+			page.status_	= "404";				// Set to 404
+			page.path_		= "404.html";			// Set path
+			page.data		= readData(page.path_);	// Read 404 Page
 		}
-
-		page.contentType_	= "text/html";
+		page.contentType_	= "text/html";			// Content allways same...
 	}
 	else {
-		page.status_		= "200 OK";						// Set to OK
+		page.status_		= "200";						// Set to OK
 		page.contentType_	= parseContentType(page.path_);	// Content type
 	}
 }
