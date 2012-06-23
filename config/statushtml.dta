@@ -1,0 +1,15 @@
+201 <html><head><title>Created</title></head><body><h1>201 Created</h1></body></html>
+202 <html><head><title>Accepted</title></head><body><h1>202 Accepted</h1></body></html>
+204 <html><head><title>No Content</title></head><body><h1>204 No Content</h1></body></html>
+300 <html><head><title>Multiple Choices</title></head><body><h1>300 Multiple Choices</h1></body></html>
+301 <html><head><title>Moved Permanently</title></head><body><h1>301 Moved Permanently</h1></body></html>
+302 <html><head><title>Moved Temporarily</title></head><body><h1>302 Moved Temporarily</h1></body></html>
+304 <html><head><title>Not Modified</title></head><body><h1>304 Not Modified</h1></body></html>
+400 <html><head><title>Bad Request</title></head><body><h1>400 Bad Request</h1></body></html>
+401 <html><head><title>Unauthorized</title></head><body><h1>401 Unauthorized</h1></body></html>
+403 <html><head><title>Forbidden</title></head><body><h1>403 Forbidden</h1></body></html>
+404 <html><head><title>Not Found</title></head><body><h1>404 Not Found</h1></body></html>
+500 <html><head><title>Internal Server Error</title></head><body><h1>500 Internal Server Error</h1></body></html>
+501 <html><head><title>Not Implemented</title></head><body><h1>501 Not Implemented</h1></body></html>
+502 <html><head><title>Bad Gateway</title></head><body><h1>502 Bad Gateway</h1></body></html>
+503 <html><head><title>Service Unavailable</title></head><body><h1>503 Service Unavailable</h1></body></html>

@@ -19,6 +19,7 @@ class Webserver {
 private:
     static string_map contenttypes;     // Different content types
     static string_map statuscodes;      // Different status codes
+    static string_map statuspages;      // The HTML code for status pages
     SOCKET sock_;                       // The servers SOCKET
 
     // ---------- WEBSERVER STATIC FUNCTIONS -------------------------------

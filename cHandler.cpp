@@ -56,7 +56,15 @@ void Webserver::cHandler::createPage(std::string l) {
     page.path_	= parsePath(l);                 // Set the PATH
     page.data	= readData(page.path_);         // Get file content
 
-    if (page.data.content == NULL) {                // IF no data read
+    if (page.data.content != NULL) {
+        page.status_        = "200";
+        page.contentType_   = parseContentType(page.path_);	// Content type
+    }
+    else {
+        /*
+            This part has to be better at parsing the different
+            errors / statuses that can occur...
+        */
         if (page.path_ == "favicon.ico") {          // If request for favicon
             page.status_    = "204";                // No Content
         }
@@ -67,10 +75,6 @@ void Webserver::cHandler::createPage(std::string l) {
         }
         page.contentType_   = "text/html";          // Content allways same...
     }
-    else {
-        page.status_        = "200";                // Set to OK
-        page.contentType_   = parseContentType(page.path_);	// Content type
-	}
 }
 
 // ---------- cHandler: get path from REQUEST ----------------------------------

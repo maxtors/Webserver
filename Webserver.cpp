@@ -8,12 +8,16 @@ Webserver::Webserver(short port) {
 	try {
         contenttypes = readMap("config/contenttypes.dta");  // content types
         statuscodes  = readMap("config/statuscodes.dta");   // status codes
+        statuspages  = readMap("config/statushtml.dta");    // status pages
 
         if (contenttypes.empty()) {                         // If empty
             throw "MISSING CONTENTTYPES";
         }
         else if (statuscodes.empty()) {
             throw "MISSING STATUSCODES";
+        }
+        else if (statuspages.empty()) {
+            throw "MISSING STATUSPAGES";
         }
 
         Webserver::startWSA();                  // Initiate WSA
