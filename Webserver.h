@@ -9,11 +9,15 @@
 
 #include <iostream>
 #include <string>
+#include <map>
 #include <WinSock2.h>
+
+typedef std::map<std::string, std::string> string_map;
 
 // ---------- WEBSERVER CLASS -------------------------------------------------
 class Webserver {
 private:
+	static string_map contenttypes;		// Different content types
 	SOCKET sock_;						// The servers SOCKET
 
 	// ---------- WEBSERVER STATIC FUNCTIONS -------------------------------
@@ -42,6 +46,7 @@ private:
 	// ---------- CHANDLER CLASS ----------------------------------------------
 	class cHandler {
 	private:
+
 		// ---------- PAGE STRUCT ---------------------------------------------
 		struct Page {
 			cSocket*	sock_;						// The connected cSocket
@@ -73,10 +78,11 @@ private:
 		~cHandler();								// cHandlers deconstructor
 	};
 	// ------------------------------------------------------------------------
-	
+
 	// ---------- WEBSERVER PRIVATE FUNCTIONS ---------------------------------
-	static unsigned __stdcall Request(void* ptrSock);	// Thread a new request
-	cSocket* Accept();									// Accept a new Socket
+	static unsigned __stdcall	Request(void* ptrSock);	// Thread a new request
+	cSocket*					Accept();				// Accept a new Socket
+	string_map					readMap(std::string f);	// Read file to MAP
 	// ------------------------------------------------------------------------
 
 public:

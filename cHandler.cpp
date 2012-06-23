@@ -1,6 +1,10 @@
 #include "Webserver.h"
 #include <fstream>
+#include <string>
+#include <map>
 #include <sstream>
+
+string_map Webserver::contenttypes;					// Static string map
 
 // ---------- cHandler Constructor --------------------------------------------
 Webserver::cHandler::cHandler(cSocket* s) {
@@ -87,25 +91,15 @@ std::string Webserver::cHandler::parsePath(std::string l) {
 // ---------- cHandler: Get content type from PATH ----------------------------
 std::string Webserver::cHandler::parseContentType(std::string p) {
 	std::string temp, type = "";
+	string_map::iterator it;
 	std::string::size_type start, stop = p.length();
 
 	start	= p.find_last_of(".");
 	temp	= p.substr(start+1, stop-1);
 
-	/*
-		DENNE BOLKEN MÅ ENDRES TIL NOE MER FLEKSIBELT OG RASKERE!!!
-	*/
-	if (temp == "html")					type = "text/html";
-	else if (temp == "htm")				type = "text/html";
-	else if (temp == "png")				type = "image/png";
-	else if (temp == "PNG")				type = "image/png";
-	else if (temp == "jpg")				type = "image/jpeg";
-	else if (temp == "JPG")				type = "image/jpeg";
-	else if (temp == "jpeg")			type = "image/jpeg";
-	else if (temp == "JPEG")			type = "image/jpeg";
-	else if (temp == "gif")				type = "image/gif";
-	else if (temp == "GIF")				type = "image/gif";
-	else								type = "application/unknown";
+	it = Webserver::contenttypes.find(temp);
+	if (it != Webserver::contenttypes.end())	type = it->second;
+	else										type = "application/unknown";
 
 	return type;
 }
