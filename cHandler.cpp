@@ -11,7 +11,6 @@ string_map Webserver::statuspages;                  // Static string map
 // ---------- cHandler Constructor --------------------------------------------
 Webserver::cHandler::cHandler(cSocket* s) {
     std::string line;                               // For holding request
-
     page.data.content   = NULL;                     // Set data content to null
     page.sock_          = s;                        // Set the socket
     line                = page.sock_->rxLine();     // Receive a line
@@ -52,14 +51,14 @@ void Webserver::cHandler::sendPage() {
 
 // ---------- Create a Page from GET Request ----------------------------------
 void Webserver::cHandler::createPage(std::string l) {
-    page.path_ = parsePath(l);          // Set the PATH
-    readData(page.path_);               // Get file content
+    page.path_ = parsePath(l);                      // Set the PATH
+    readData(page.path_);                           // Get file content
 
-    if (page.data.content != NULL) {
-        page.status_        = "200";
+    if (page.data.content != NULL) {                // If the data was found
+        page.status_        = "200";                        // Set status OK
         page.contentType_   = parseContentType(page.path_);	// Content type
     }
-    else {
+    else {                                          // Data was not found
         /*
             This part has to be better at parsing the different
             errors / statuses that can occur...
@@ -68,11 +67,11 @@ void Webserver::cHandler::createPage(std::string l) {
             page.status_    = "204";                // No Content
         }
         else {
-            page.status_   = "404";                     // Set to 404
-            page.path_     = "404.html";                // Set path
+            page.status_   = "404";                 // Set to 404
+            page.path_     = "404.html";            // Set path
         }
-        constData(page.status_);                        // Read 404 Page
-        page.contentType_ = "text/html";                // Always same
+        constData(page.status_);                    // Read 404 Page
+        page.contentType_ = "text/html";            // Always same
     }
 }
 
