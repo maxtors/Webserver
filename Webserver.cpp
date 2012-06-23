@@ -4,33 +4,31 @@
 
 // ---------- Webserver Constructor -------------------------------------------
 Webserver::Webserver(short port) {
+	Webserver::startWSA();						// Initiate WSA
+	sockaddr_in addr;							// Sockaddr struct for address
 
-	Webserver::startWSA();
+	addr.sin_family = AF_INET;					// Adressfamily = IPV4
+	addr.sin_port = htons(port);				// Set addr port
+	addr.sin_addr.S_un.S_addr = INADDR_ANY;		// Any IP addr
+	for (int i = 0; i < 8; i++) { addr.sin_zero[i] = 0; }	// Set all to zero
 
-	sockaddr_in addr;
+	sock_ = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);		// Create a socket
 
-	addr.sin_family = AF_INET;
-	addr.sin_port = htons(port);
-	addr.sin_addr.S_un.S_addr = INADDR_ANY;
-	for (int i = 0; i < 8; i++) { addr.sin_zero[i] = 0; }
-
-	sock_ = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-
-	if (sock_ == INVALID_SOCKET) {
-		throw "INVALID SOCKET";
+	if (sock_ == INVALID_SOCKET) {				// If socket is invalid
+		throw "INVALID SOCKET";		
 	}
 
 	if (bind(sock_, reinterpret_cast<sockaddr*>(&addr), sizeof(addr))!=0) {
-		closesocket(sock_);
-		throw "INVALID SOCKET";
+		closesocket(sock_);						
+		throw "INVALID SOCKET";		
 	}
 
-	listen(sock_, SOMAXCONN);
+	listen(sock_, SOMAXCONN);					// Start to listen on socket
 
-	unsigned ret;
+	unsigned ret;								// Return value of thread
 	while (true) {
-		cSocket* s = this->Accept();
-		_beginthreadex(0,0,Request,(void*) s,0,&ret);
+		cSocket* s = this->Accept();					// Accept new "client"
+		_beginthreadex(0,0,Request,(void*) s,0,&ret);	// Start a thread
 	}
 }
 
@@ -47,29 +45,27 @@ unsigned Webserver::Request(void* ptrSock) {
 
 // ---------- Accept an incomming SOCKET --------------------------------------
 Webserver::cSocket* Webserver::Accept() {
-	SOCKET newsocket = accept(sock_, 0, 0);
+	SOCKET newsocket = accept(sock_, 0, 0);		// Create a new socket...
 
-	if (newsocket == INVALID_SOCKET) {
-		throw "Invalid Socket";
+	if (newsocket == INVALID_SOCKET) {			// If accept gave error
+		throw "INVALID SOCKET";
 	}
 
-	cSocket* s = new cSocket(newsocket);
-	return s;
+	cSocket* s = new cSocket(newsocket);		// Create new cSocket	
+	return s;									// Return new cSocket
 }
 
 // ---------- Initiate WSA ----------------------------------------------------
 void Webserver::startWSA() {
-	WSADATA wsaData;
+	WSADATA wsaData;									// WSA data struct
 
-	if (WSAStartup(MAKEWORD(2,0), &wsaData) == 0) {
-
-		// Check if major version is at least 2
-		if (!(LOBYTE(wsaData.wVersion) >= 2)) {
-			throw "required version not supported!";
+	if (WSAStartup(MAKEWORD(2,0), &wsaData) == 0) {		// Start WSA
+		if (!(LOBYTE(wsaData.wVersion) >= 2)) {			// Check the version
+			throw "REQUIRED VERSION NOT SUPPORTED";
 		}
 	}
-	else {
-		throw "startup failed!\n";
+	else {												// If error at startup
+		throw "STARTUP FAILED";
 	}
 }
 
