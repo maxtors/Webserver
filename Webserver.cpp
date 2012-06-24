@@ -3,9 +3,14 @@
 #include <fstream>
 #include "Webserver.h"
 
+Webserver::Config Webserver::config;                        // Static config
+
 // ---------- Webserver Constructor -------------------------------------------
-Webserver::Webserver(short port) {
+Webserver::Webserver() {
 	try {
+
+        // ---------- READ THE CONFIG FILES -----------------------------------
+        readConfig();                                       // Read config file
         contenttypes = readMap("config/contenttypes.dta");  // content types
         statuscodes  = readMap("config/statuscodes.dta");   // status codes
         statuspages  = readMap("config/statushtml.dta");    // status pages
@@ -20,11 +25,12 @@ Webserver::Webserver(short port) {
             throw "MISSING STATUSPAGES";
         }
 
+        // ---------- INITIATE THE SERVER SOCKET ------------------------------
         Webserver::startWSA();                  // Initiate WSA
         sockaddr_in addr;                       // Sockaddr struct for address
 
         addr.sin_family = AF_INET;              // Adressfamily = IPV4
-        addr.sin_port = htons(port);            // Set addr port
+        addr.sin_port = htons(config.port);     // Set addr port
         addr.sin_addr.S_un.S_addr = INADDR_ANY; // Any IP addr
         memset(addr.sin_zero, 0, 8);            // Set all zero
         sock_ = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);  // Make socket
@@ -39,6 +45,8 @@ Webserver::Webserver(short port) {
         }
 
         listen(sock_, SOMAXCONN);               // Start to listen on socket
+
+        // ---------- ACCEPT AND HANDLE NEW CONNECTIONS -----------------------
         unsigned ret;                           // Return value of thread
         while (true) {
             cSocket* s = this->Accept();                    // New connection
@@ -69,7 +77,6 @@ Webserver::cSocket* Webserver::Accept() {
     if (newsocket == INVALID_SOCKET) {          // If accept gave error
         throw "INVALID SOCKET";
     }
-
     cSocket* s = new cSocket(newsocket);        // Create new cSocket	
     return s;                                   // Return new cSocket
 }
@@ -113,4 +120,25 @@ string_map Webserver::readMap(std::string f) {
         }
     }
     return vars;                                // return map
+}
+
+void Webserver::readConfig() {
+    std::string line;
+    std::ifstream file("config/config.dta");
+
+    if (!file) {
+        throw "CONFIG FILE NOT FOUND";
+    }
+    else {
+        std::getline(file, line);
+        while (!file.eof()) {
+            if (line.find(";") != 0) {
+                // parse the content...
+            }
+            std::getline(file, line);
+        }
+    }
+
+    Webserver::config.port = 8080;
+    Webserver::config.default_errorpages = false;
 }

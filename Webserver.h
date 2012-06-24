@@ -17,15 +17,19 @@ typedef std::map<std::string, std::string> string_map;
 // ---------- WEBSERVER CLASS -------------------------------------------------
 class Webserver {
 private:
+    // ---------- WEBSERVER PRIVATE DATA -------------------------------
     static string_map contenttypes;     // Different content types
     static string_map statuscodes;      // Different status codes
     static string_map statuspages;      // The HTML code for status pages
     SOCKET sock_;                       // The servers SOCKET
 
-    // ---------- WEBSERVER STATIC FUNCTIONS -------------------------------
-    static void startWSA();             // Start Windows Socket API
-    static void stopWSA();              // Stop  Windows Socket API
-    // --------------------------------------------------------------------
+    struct Config {                     // Struct to hold configuration params
+        short port;                     // Portnumber
+        bool default_errorpages;        // If wanted default error pages
+    };
+
+    static Config config;               // Static config struct
+    // ------------------------------------------------------------------------
 
     // ---------- CSOCKET CLASS -----------------------------------------------
     class cSocket {
@@ -85,10 +89,13 @@ private:
     static unsigned __stdcall   Request(void* ptrSock); // Thread a new request
     cSocket*                    Accept();               // Accept a new Socket
     string_map                  readMap(std::string f); // Read file to MAP
+    static void                 startWSA();             // Start Windows Socket
+    static void                 stopWSA();              // Stop  Windows Socket
+    void                        readConfig();           // Read the config file
 	// ------------------------------------------------------------------------
 
 public:
-    Webserver(short port);                          // Webservers constructor
+    Webserver();                                    // Webservers constructor
     ~Webserver();                                   // Webservers deconstructor
 };
 #endif

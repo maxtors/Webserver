@@ -59,10 +59,6 @@ void Webserver::cHandler::createPage(std::string l) {
         page.contentType_   = parseContentType(page.path_);	// Content type
     }
     else {                                          // Data was not found
-        /*
-            This part has to be better at parsing the different
-            errors / statuses that can occur...
-        */
         if (page.path_ == "favicon.ico") {          // If request for favicon
             page.status_    = "204";                // No Content
         }
@@ -70,8 +66,24 @@ void Webserver::cHandler::createPage(std::string l) {
             page.status_   = "404";                 // Set to 404
             page.path_     = "404.html";            // Set path
         }
-        constData(page.status_);                    // Read 404 Page
-        page.contentType_ = "text/html";            // Always same
+
+        // The following section checks if default error pages are to be
+        // used, or if a file wil be supplied, if a file is not found
+        // an error is given, and the default is used...
+        if (Webserver::config.default_errorpages == true
+            || page.status_ == "204") {
+
+            constData(page.status_);                    // Read const Page
+        }
+        else {
+            readData(page.path_);                       // Read the file
+            if (page.data.content == NULL) {            // If no data found
+                constData(page.status_);                // Get const again
+                std::cout << "[ERROR] - Missing error page: ";  // Show error
+                std::cout << page.status_ << ", used default instead\n";
+            }
+        }
+        page.contentType_ = "text/html";                // Always same
     }
 }
 
