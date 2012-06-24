@@ -122,23 +122,25 @@ string_map Webserver::readMap(std::string f) {
     return vars;                                // return map
 }
 
+// ---------- Read the config file and set the correct parameters -------------
 void Webserver::readConfig() {
-    std::string line;
-    std::ifstream file("config/config.dta");
+    std::string line;                               // For each line to read
+    std::ifstream file("config/config.dta");        // Open the file
 
-    if (!file) {
-        throw "CONFIG FILE NOT FOUND";
+    if (!file) {                                    // If it could not be opend
+        throw "CONFIG FILE NOT FOUND";              // Throw an error
     }
-    else {
-        std::getline(file, line);
-        while (!file.eof()) {
-            if (line.find(";") != 0) {
+    else {                                          // If the file is open
+        std::getline(file, line);                   // Get the first line
+        while (!file.eof()) {                       // Loop until file ends
+            if (line.find(";") != 0) {              // ; == comment line
                 // parse the content...
             }
-            std::getline(file, line);
+            std::getline(file, line);               // Get the next line
         }
     }
 
+    // THIS IS JUST BECAUSE I HAVENT MADE THE CONFIG PARAM PARSING PART YET
     Webserver::config.port = 8080;
     Webserver::config.default_errorpages = false;
 }
