@@ -137,22 +137,29 @@ void Webserver::readConfig() {
     else {                                          // If the file is open
         std::getline(file, line);                   // Get the first line
         while (!file.eof()) {                       // Loop until file ends
+
+            /*
+                DENNE BOLKEN BURDE KANSKJE SKILLES UT I EN EGEN
+                FUNKSJON FOR Å GJØRE DET HELE MERE OVERSIKTLIG ????
+            */
+
             if (line.find(";") != 0) {              // ; == comment line
 
-                start = line.find_first_of(":");
-                parameter = line.substr(0, start);
+                start = line.find_first_of(":");    // Get were value starts
+                parameter = line.substr(0, start);  // Extract param name
 
-                start += 1;
-                line = line.substr(start, line.size() - (start));
-                start = line.find_first_not_of(" ");
-                value = line.substr(start, line.size() - start);
-                std::cout << "\"" << parameter << "\" = ";
-                std::cout << "\"" << value << "\"\n";
+                start += 1;                         // Skip forward one
+                line = line.substr(start, line.size() - (start));  // Separate
+                start = line.find_first_not_of(" ");               // Skip ws
+                value = line.substr(start, line.size() - start);   // Set Value
 
-                if (value == "yes") {
+                std::cout << "SET: " << parameter << " = "; // Show parameter
+                std::cout << value << "\n";                 // and value...
+
+                if (value == "yes") {               // If value is bool true
                     boolValue = true;
                 }
-                else if (value == "no") {
+                else if (value == "no") {           // If value is bool false
                     boolValue = false;
                 }
 
@@ -160,6 +167,9 @@ void Webserver::readConfig() {
                     Her skal alle de forskjellige parameterene settes
                     det burde da også kanskje være noe som sjekker om
                     alt har blitt satt?
+
+                    -------------- IKKE FERDIG --------------------------------
+
                 */
                 if (parameter == "port") {
                     
