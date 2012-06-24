@@ -125,6 +125,10 @@ string_map Webserver::readMap(std::string f) {
 // ---------- Read the config file and set the correct parameters -------------
 void Webserver::readConfig() {
     std::string line;                               // For each line to read
+    std::string parameter, value;                   // String for param & value
+    std::string::size_type start;                   // Where something starts
+    bool boolValue;                                 // Boolean config value
+    bool usesBool;                                  // Parameter is bool value
     std::ifstream file("config/config.dta");        // Open the file
 
     if (!file) {                                    // If it could not be opend
@@ -134,7 +138,35 @@ void Webserver::readConfig() {
         std::getline(file, line);                   // Get the first line
         while (!file.eof()) {                       // Loop until file ends
             if (line.find(";") != 0) {              // ; == comment line
-                // parse the content...
+
+                start = line.find_first_of(":");
+                parameter = line.substr(0, start);
+
+                start += 1;
+                line = line.substr(start, line.size() - (start));
+                start = line.find_first_not_of(" ");
+                value = line.substr(start, line.size() - start);
+                std::cout << "\"" << parameter << "\" = ";
+                std::cout << "\"" << value << "\"\n";
+
+                if (value == "yes") {
+                    boolValue = true;
+                }
+                else if (value == "no") {
+                    boolValue = false;
+                }
+
+                /*
+                    Her skal alle de forskjellige parameterene settes
+                    det burde da også kanskje være noe som sjekker om
+                    alt har blitt satt?
+                */
+                if (parameter == "port") {
+                    
+                }
+                else if (parameter == "default-errorpages") {
+                    Webserver::config.default_errorpages = boolValue;
+                }
             }
             std::getline(file, line);               // Get the next line
         }
