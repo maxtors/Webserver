@@ -10,7 +10,7 @@ Webserver::Webserver() {
 	try {
 
         // ---------- READ THE CONFIG FILES -----------------------------------
-        readConfig();                                       // Read config file
+        config       = Config("config/config.dta");
         contenttypes = readMap("config/contenttypes.dta");  // content types
         statuscodes  = readMap("config/statuscodes.dta");   // status codes
         statuspages  = readMap("config/statushtml.dta");    // status pages
@@ -123,13 +123,13 @@ string_map Webserver::readMap(std::string f) {
 }
 
 // ---------- Read the config file and set the correct parameters -------------
-void Webserver::readConfig() {
-    std::string line;                               // For each line to read
-    std::string parameter, value;                   // String for param & value
-    std::string::size_type start;                   // Where something starts
-    bool boolValue;                                 // Boolean config value
-    bool usesBool;                                  // Parameter is bool value
-    std::ifstream file("config/config.dta");        // Open the file
+Webserver::Config::Config(std::string f) {
+
+    std::string line;
+    std::string parameter, value;
+    std::string::size_type start;
+    bool boolValue;
+    std::ifstream file(f.c_str());                  // Open the file
 
     if (!file) {                                    // If it could not be opend
         throw "CONFIG FILE NOT FOUND";              // Throw an error
@@ -175,7 +175,7 @@ void Webserver::readConfig() {
                     
                 }
                 else if (parameter == "default-errorpages") {
-                    Webserver::config.default_errorpages = boolValue;
+                    default_errorpages = boolValue;
                 }
             }
             std::getline(file, line);               // Get the next line
@@ -183,6 +183,6 @@ void Webserver::readConfig() {
     }
 
     // THIS IS JUST BECAUSE I HAVENT MADE THE CONFIG PARAM PARSING PART YET
-    Webserver::config.port = 8080;
-    Webserver::config.default_errorpages = false;
+    port = 8080;
+    default_errorpages = false;
 }

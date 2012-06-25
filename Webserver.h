@@ -16,7 +16,6 @@ typedef std::map<std::string, std::string> string_map;
 
 class cSocket;                          // Forward Declaraction
 class cHandler;
-class WebserverConfig;
 
 // ---------- WEBSERVER CLASS -------------------------------------------------
 class Webserver {
@@ -27,7 +26,15 @@ private:
     static string_map statuspages;      // The HTML code for status pages
     SOCKET sock_;                       // The servers SOCKET
 
-    static WebserverConfig config;      // Static config
+    struct Config {
+        short   port;
+        bool    default_errorpages;
+
+        Config() {}
+        Config(std::string f);
+    };
+
+    static Config config;
     // ------------------------------------------------------------------------
 
     friend class cSocket;               // Private friend classes
@@ -39,14 +46,12 @@ private:
     string_map                  readMap(std::string f); // Read file to MAP
     static void                 startWSA();             // Start Windows Socket
     static void                 stopWSA();              // Stop  Windows Socket
-    void                        readConfig();           // Read the config file
 	// ------------------------------------------------------------------------
 
 public:
     Webserver();                                    // Webservers constructor
     ~Webserver();                                   // Webservers deconstructor
 };
-// ----------------------------------------------------------------------------
 
 
 // ---------- CSOCKET CLASS ---------------------------------------------------
@@ -102,17 +107,5 @@ public:
     cHandler(cSocket* s);                       // cHandlers constructor
     ~cHandler();                                // cHandlers deconstructor
 };
-// ----------------------------------------------------------------------------
-
-// ---------- WEBSERVERCONFIG CLASS -------------------------------------------
-class WebserverConfig {
-private:
-    short   port;
-    bool    default_errorpags;
-
-public:
-    WebserverConfig();
-    ~WebserverConfig();
-}
 // ----------------------------------------------------------------------------
 #endif
