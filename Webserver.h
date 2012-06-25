@@ -16,6 +16,7 @@ typedef std::map<std::string, std::string> string_map;
 
 class cSocket;                          // Forward Declaraction
 class cHandler;
+class WebserverConfig;
 
 // ---------- WEBSERVER CLASS -------------------------------------------------
 class Webserver {
@@ -26,12 +27,7 @@ private:
     static string_map statuspages;      // The HTML code for status pages
     SOCKET sock_;                       // The servers SOCKET
 
-    struct Config {                     // Struct to hold configuration params
-        short port;                     // Portnumber
-        bool default_errorpages;        // If wanted default error pages
-    };
-
-    static Config config;               // Static config struct
+    static WebserverConfig config;      // Static config
     // ------------------------------------------------------------------------
 
     friend class cSocket;               // Private friend classes
@@ -50,6 +46,8 @@ public:
     Webserver();                                    // Webservers constructor
     ~Webserver();                                   // Webservers deconstructor
 };
+// ----------------------------------------------------------------------------
+
 
 // ---------- CSOCKET CLASS ---------------------------------------------------
 class cSocket {
@@ -68,6 +66,7 @@ public:
     void        txLine(std::string line);       // Transmit a line
 };
 // ----------------------------------------------------------------------------
+
 
 // ---------- CHANDLER CLASS --------------------------------------------------
 class cHandler {
@@ -103,5 +102,17 @@ public:
     cHandler(cSocket* s);                       // cHandlers constructor
     ~cHandler();                                // cHandlers deconstructor
 };
+// ----------------------------------------------------------------------------
+
+// ---------- WEBSERVERCONFIG CLASS -------------------------------------------
+class WebserverConfig {
+private:
+    short   port;
+    bool    default_errorpags;
+
+public:
+    WebserverConfig();
+    ~WebserverConfig();
+}
 // ----------------------------------------------------------------------------
 #endif
