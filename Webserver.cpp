@@ -71,7 +71,7 @@ unsigned Webserver::Request(void* ptrSock) {
 }
 
 // ---------- Accept an incomming SOCKET --------------------------------------
-Webserver::cSocket* Webserver::Accept() {
+cSocket* Webserver::Accept() {
     SOCKET newsocket = accept(sock_, 0, 0);     // Create a new socket...
 
     if (newsocket == INVALID_SOCKET) {          // If accept gave error

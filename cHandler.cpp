@@ -9,7 +9,7 @@ string_map Webserver::statuscodes;                  // Static string map
 string_map Webserver::statuspages;                  // Static string map
 
 // ---------- cHandler Constructor --------------------------------------------
-Webserver::cHandler::cHandler(cSocket* s) {
+cHandler::cHandler(cSocket* s) {
     std::string line;                               // For holding request
     page.data.content   = NULL;                     // Set data content to null
     page.sock_          = s;                        // Set the socket
@@ -30,12 +30,12 @@ Webserver::cHandler::cHandler(cSocket* s) {
 }
 
 // ---------- cHandler Deconstructor ------------------------------------------
-Webserver::cHandler::~cHandler() {
+cHandler::~cHandler() {
     delete [] page.data.content;                    // Delete allocated content
 }
 
 // ---------- Send a finnished page to the client -----------------------------
-void Webserver::cHandler::sendPage() {
+void cHandler::sendPage() {
     std::stringstream ss_size;                      // Stringstream
     ss_size << page.data.size;                      // Size(int) to string
 
@@ -50,7 +50,7 @@ void Webserver::cHandler::sendPage() {
 }
 
 // ---------- Create a Page from GET Request ----------------------------------
-void Webserver::cHandler::createPage(std::string l) {
+void cHandler::createPage(std::string l) {
     page.path_ = parsePath(l);                      // Set the PATH
     readData(page.path_);                           // Get file content
 
@@ -88,7 +88,7 @@ void Webserver::cHandler::createPage(std::string l) {
 }
 
 // ---------- cHandler: get path from REQUEST ----------------------------------
-std::string Webserver::cHandler::parsePath(std::string l) {
+std::string cHandler::parsePath(std::string l) {
     std::string::size_type start, stop;
     std::string result;
 
@@ -103,7 +103,7 @@ std::string Webserver::cHandler::parsePath(std::string l) {
 }
 
 // ---------- cHandler: Get content type from PATH ----------------------------
-std::string Webserver::cHandler::parseContentType(std::string p) {
+std::string cHandler::parseContentType(std::string p) {
     std::string temp, type = "";
     string_map::iterator it;
     std::string::size_type start, stop = p.length();
@@ -119,7 +119,7 @@ std::string Webserver::cHandler::parseContentType(std::string p) {
 }
 
 // ---------- cHandler: READ the wanted content data from PATH ----------------
-void Webserver::cHandler::readData(std::string f) {
+void cHandler::readData(std::string f) {
     int end, begin;                     // Start and stop of file
 
     page.data.size      = 0;            // Set size to zero
@@ -149,7 +149,7 @@ void Webserver::cHandler::readData(std::string f) {
 }
 
 // ---------- Get wanted content data from constant data ----------------------
-void Webserver::cHandler::constData(std::string s) {
+void cHandler::constData(std::string s) {
     string_map::iterator it;                    // String map itterator
 
     it = Webserver::statuspages.find(s);        // Try to find wanted status
@@ -168,6 +168,6 @@ void Webserver::cHandler::constData(std::string s) {
 }
 
 // ---------- cHandler: Parse data (dynamic content) --------------------------
-void Webserver::cHandler::parseData(char* d) {
+void cHandler::parseData(char* d) {
     // ...
 }

@@ -7,16 +7,16 @@
 #define CSOCKET_VERSION  2
 
 // ---------- cScoket Constructor ---------------------------------------------
-Webserver::cSocket::cSocket(SOCKET s)   { sock_ = s;            }
+cSocket::cSocket(SOCKET s)   { sock_ = s;            }
 
 // ---------- cScoket Deonstructor --------------------------------------------
-Webserver::cSocket::~cSocket()          { close();              }
+cSocket::~cSocket()          { close();              }
 
 // ---------- Close the socket ------------------------------------------------
-inline void Webserver::cSocket::close() { closesocket(sock_);   }
+inline void cSocket::close() { closesocket(sock_);   }
 
 // ---------- Receive Data ----------------------------------------------------
-std::string Webserver::cSocket::rxData() {
+std::string cSocket::rxData() {
     char buffer[1024];
     int retval;                         // Number of bytes received
 
@@ -38,7 +38,7 @@ std::string Webserver::cSocket::rxData() {
 }
 
 // ---------- Receive a single line -------------------------------------------
-std::string Webserver::cSocket::rxLine() {
+std::string cSocket::rxLine() {
 	std::string result;                 // String to hold the received line
 	char r;                             // Buffer for receiving char
 	int rStatus;                        // Receive status
@@ -56,12 +56,12 @@ std::string Webserver::cSocket::rxLine() {
 }
 
 // ---------- Transmit data ---------------------------------------------------
-void Webserver::cSocket::txData(char* data, int size) {
+void cSocket::txData(char* data, int size) {
     send(sock_, data, size, 0);         // Send data on socket
 }
 
 // ---------- Transmit a single line ------------------------------------------
-void Webserver::cSocket::txLine(std::string line) {
+void cSocket::txLine(std::string line) {
     line += "\n";                                   // Append newline char
     send(sock_, line.c_str(), line.length(), 0);    // Send line on socket
 }
