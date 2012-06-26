@@ -1,3 +1,0 @@
-;This is the config file for the simple webserver
-port:8080
-default-errorpages: yes
