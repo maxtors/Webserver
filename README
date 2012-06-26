@@ -5,14 +5,18 @@ html content over HTTP. The language used is C++, and for socket networking
 the Windows Socket API is used.
 
 A few changes are going to be made in the close future:
-- The parsing of the content type is to static (will be changed)
 
 - A "routes" function will be added (inspired by ruby on rails) so that
 	the user of this program can manualy route URL's to his/her wanted
 	html file. Ex: /hello/about is routed to the /about.html file.
+	I've pute some though into it, and not sure how flexible i want
+	this to be. If it should be able to route entire folders or just
+	simple files...
 
 - The handelig of "is this a good request?" part, and the status-codes
 	that are given is a little to static and maybe not flexible enough.
+	This has been worked on some, but it is stil on 200 OK / 204 NO CONTENT
+	or 404 NOT FOUND...
 
 And also, as an "way out there in the future" i would like to be able
 to add support for a really simple "dynamic content" system. Say for
