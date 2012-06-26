@@ -9,6 +9,7 @@ Webserver::Webserver(short port) {
 	try {
 
         // ---------- READ THE CONFIG FILES -----------------------------------
+
         routes       = readMap("config/routes.dta");
         contenttypes = readMap("config/contenttypes.dta");
         statuscodes  = readMap("config/statuscodes.dta");

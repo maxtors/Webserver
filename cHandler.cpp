@@ -76,6 +76,9 @@ void cHandler::createPage(std::string l) {
 
 // ---------- cHandler: get path from REQUEST ----------------------------------
 std::string cHandler::parsePath(std::string l) {
+
+    std::cout << l << "\n";
+
     std::string::size_type start, stop;
     std::string result;
     string_map::iterator it;
