@@ -9,31 +9,27 @@ Webserver::Webserver(short port) {
 	try {
 
         // ---------- READ THE CONFIG FILES -----------------------------------
-        contenttypes = readMap("config/contenttypes.dta");  // content types
-        statuscodes  = readMap("config/statuscodes.dta");   // status codes
-        statuspages  = readMap("config/statushtml.dta");    // status pages
+        routes       = readMap("config/routes.dta");
+        contenttypes = readMap("config/contenttypes.dta");
+        statuscodes  = readMap("config/statuscodes.dta");
+        statuspages  = readMap("config/statushtml.dta");
 
-        if (contenttypes.empty()) {                         // If empty
-            throw "MISSING CONTENTTYPES";
-        }
-        else if (statuscodes.empty()) {
-            throw "MISSING STATUSCODES";
-        }
-        else if (statuspages.empty()) {
-            throw "MISSING STATUSPAGES";
-        }
+        if      (contenttypes.empty())  throw "MISSING CONTENTTYPES";
+        else if (routes.empty())        throw "MISSING ROUTES";
+        else if (statuscodes.empty())   throw "MISSING STATUSCODES";
+        else if (statuspages.empty())   throw "MISSING STATUSPAGES";
 
         // ---------- INITIATE THE SERVER SOCKET ------------------------------
         Webserver::startWSA();                  // Initiate WSA
-        sockaddr_in addr;                       // Sockaddr struct for address
+        sockaddr_in addr;
 
-        addr.sin_family = AF_INET;              // Adressfamily = IPV4
-        addr.sin_port = htons(port);            // Set addr port
-        addr.sin_addr.S_un.S_addr = INADDR_ANY; // Any IP addr
-        memset(addr.sin_zero, 0, 8);            // Set all zero
-        sock_ = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);  // Make socket
+        addr.sin_family = AF_INET;
+        addr.sin_port = htons(port);
+        addr.sin_addr.S_un.S_addr = INADDR_ANY;
+        memset(addr.sin_zero, 0, 8);
+        sock_ = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 
-        if (sock_ == INVALID_SOCKET) {          // If socket is invalid
+        if (sock_ == INVALID_SOCKET) {
             throw "INVALID SOCKET";
         }
 

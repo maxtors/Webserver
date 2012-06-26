@@ -24,6 +24,7 @@ private:
     static string_map contenttypes;     // Different content types
     static string_map statuscodes;      // Different status codes
     static string_map statuspages;      // The HTML code for status pages
+    static string_map routes;           // Routes for URL's
     SOCKET sock_;                       // The servers SOCKET
     // ------------------------------------------------------------------------
 
