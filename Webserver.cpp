@@ -1,16 +1,14 @@
 #include <process.h>
 #include <WinSock2.h>
 #include <fstream>
+#include <sstream>
 #include "Webserver.h"
 
-Webserver::Config Webserver::config;                        // Static config
-
 // ---------- Webserver Constructor -------------------------------------------
-Webserver::Webserver() {
+Webserver::Webserver(short port) {
 	try {
 
         // ---------- READ THE CONFIG FILES -----------------------------------
-        config       = Config("config/config.dta");
         contenttypes = readMap("config/contenttypes.dta");  // content types
         statuscodes  = readMap("config/statuscodes.dta");   // status codes
         statuspages  = readMap("config/statushtml.dta");    // status pages
@@ -30,7 +28,7 @@ Webserver::Webserver() {
         sockaddr_in addr;                       // Sockaddr struct for address
 
         addr.sin_family = AF_INET;              // Adressfamily = IPV4
-        addr.sin_port = htons(config.port);     // Set addr port
+        addr.sin_port = htons(port);            // Set addr port
         addr.sin_addr.S_un.S_addr = INADDR_ANY; // Any IP addr
         memset(addr.sin_zero, 0, 8);            // Set all zero
         sock_ = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);  // Make socket
@@ -120,69 +118,4 @@ string_map Webserver::readMap(std::string f) {
         }
     }
     return vars;                                // return map
-}
-
-// ---------- Read the config file and set the correct parameters -------------
-Webserver::Config::Config(std::string f) {
-
-    std::string line;
-    std::string parameter, value;
-    std::string::size_type start;
-    bool boolValue;
-    std::ifstream file(f.c_str());                  // Open the file
-
-    if (!file) {                                    // If it could not be opend
-        throw "CONFIG FILE NOT FOUND";              // Throw an error
-    }
-    else {                                          // If the file is open
-        std::getline(file, line);                   // Get the first line
-        while (!file.eof()) {                       // Loop until file ends
-
-            /*
-                DENNE BOLKEN BURDE KANSKJE SKILLES UT I EN EGEN
-                FUNKSJON FOR Å GJØRE DET HELE MERE OVERSIKTLIG ????
-            */
-
-            if (line.find(";") != 0) {              // ; == comment line
-
-                start = line.find_first_of(":");    // Get were value starts
-                parameter = line.substr(0, start);  // Extract param name
-
-                start += 1;                         // Skip forward one
-                line = line.substr(start, line.size() - (start));  // Separate
-                start = line.find_first_not_of(" ");               // Skip ws
-                value = line.substr(start, line.size() - start);   // Set Value
-
-                std::cout << "SET: " << parameter << " = "; // Show parameter
-                std::cout << value << "\n";                 // and value...
-
-                if (value == "yes") {               // If value is bool true
-                    boolValue = true;
-                }
-                else if (value == "no") {           // If value is bool false
-                    boolValue = false;
-                }
-
-                /*
-                    Her skal alle de forskjellige parameterene settes
-                    det burde da også kanskje være noe som sjekker om
-                    alt har blitt satt?
-
-                    -------------- IKKE FERDIG --------------------------------
-
-                */
-                if (parameter == "port") {
-                    
-                }
-                else if (parameter == "default-errorpages") {
-                    default_errorpages = boolValue;
-                }
-            }
-            std::getline(file, line);               // Get the next line
-        }
-    }
-
-    // THIS IS JUST BECAUSE I HAVENT MADE THE CONFIG PARAM PARSING PART YET
-    port = 8080;
-    default_errorpages = false;
 }

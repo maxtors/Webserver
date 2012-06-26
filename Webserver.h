@@ -25,16 +25,6 @@ private:
     static string_map statuscodes;      // Different status codes
     static string_map statuspages;      // The HTML code for status pages
     SOCKET sock_;                       // The servers SOCKET
-
-    struct Config {
-        short   port;
-        bool    default_errorpages;
-
-        Config() {}
-        Config(std::string f);
-    };
-
-    static Config config;
     // ------------------------------------------------------------------------
 
     friend class cSocket;               // Private friend classes
@@ -49,7 +39,7 @@ private:
 	// ------------------------------------------------------------------------
 
 public:
-    Webserver();                                    // Webservers constructor
+    Webserver(short port);                          // Webservers constructor
     ~Webserver();                                   // Webservers deconstructor
 };
 

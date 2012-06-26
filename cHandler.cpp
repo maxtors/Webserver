@@ -67,23 +67,8 @@ void cHandler::createPage(std::string l) {
             page.path_     = "404.html";            // Set path
         }
 
-        // The following section checks if default error pages are to be
-        // used, or if a file wil be supplied, if a file is not found
-        // an error is given, and the default is used...
-        if (Webserver::config.default_errorpages == true
-            || page.status_ == "204") {
-
-            constData(page.status_);                    // Read const Page
-        }
-        else {
-            readData(page.path_);                       // Read the file
-            if (page.data.content == NULL) {            // If no data found
-                constData(page.status_);                // Get const again
-                std::cout << "[ERROR] - Missing error page: ";  // Show error
-                std::cout << page.status_ << ", used default instead\n";
-            }
-        }
-        page.contentType_ = "text/html";                // Always same
+        constData(page.status_);                    // Read const Page
+        page.contentType_ = "text/html";            // Always same
     }
 }
 
