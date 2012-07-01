@@ -9,14 +9,11 @@ Webserver::Webserver(short port) {
 	try {
 
         // ---------- READ THE CONFIG FILES -----------------------------------
-
-        routes       = readMap("config/routes.dta");
         contenttypes = readMap("config/contenttypes.dta");
         statuscodes  = readMap("config/statuscodes.dta");
         statuspages  = readMap("config/statushtml.dta");
 
         if      (contenttypes.empty())  throw "MISSING CONTENTTYPES";
-        else if (routes.empty())        throw "MISSING ROUTES";
         else if (statuscodes.empty())   throw "MISSING STATUSCODES";
         else if (statuspages.empty())   throw "MISSING STATUSPAGES";
 
@@ -30,9 +27,7 @@ Webserver::Webserver(short port) {
         memset(addr.sin_zero, 0, 8);
         sock_ = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 
-        if (sock_ == INVALID_SOCKET) {
-            throw "INVALID SOCKET";
-        }
+        if (sock_ == INVALID_SOCKET) throw "INVALID SOCKET";
 
         if (bind(sock_, reinterpret_cast<sockaddr*>(&addr), sizeof(addr))!=0) {
             closesocket(sock_);
@@ -55,9 +50,10 @@ Webserver::Webserver(short port) {
 }
 
 // ---------- Webserver Deonstructor ------------------------------------------
-Webserver::~Webserver() {
-    Webserver::stopWSA();
-}
+Webserver::~Webserver() 	{ Webserver::stopWSA(); }
+
+// ---------- Stop WSA --------------------------------------------------------
+void Webserver::stopWSA() 	{ WSACleanup(); }
 
 // ---------- Create a Request Handler ----------------------------------------
 unsigned Webserver::Request(void* ptrSock) {
@@ -68,11 +64,8 @@ unsigned Webserver::Request(void* ptrSock) {
 // ---------- Accept an incomming SOCKET --------------------------------------
 cSocket* Webserver::Accept() {
     SOCKET newsocket = accept(sock_, 0, 0);     // Create a new socket...
-
-    if (newsocket == INVALID_SOCKET) {          // If accept gave error
-        throw "INVALID SOCKET";
-    }
-    cSocket* s = new cSocket(newsocket);        // Create new cSocket	
+    if (newsocket == INVALID_SOCKET) throw "INVALID SOCKET";
+    cSocket* s = new cSocket(newsocket);
     return s;                                   // Return new cSocket
 }
 
@@ -88,11 +81,6 @@ void Webserver::startWSA() {
 	else {                                              // If error at startup
         throw "STARTUP FAILED";
     }
-}
-
-// ---------- Stop WSA --------------------------------------------------------
-void Webserver::stopWSA() {
-    WSACleanup();
 }
 
 // ---------- Read filecontent to string map ----------------------------------
