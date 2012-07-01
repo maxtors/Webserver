@@ -8,7 +8,6 @@
 string_map Webserver::contenttypes;
 string_map Webserver::statuscodes;
 string_map Webserver::statuspages;
-string_map Webserver::routes;
 
 // ---------- cHandler Constructor --------------------------------------------
 cHandler::cHandler(cSocket* s) {
@@ -19,22 +18,15 @@ cHandler::cHandler(cSocket* s) {
 
     if (!line.empty() && line.find("GET") == 0) {   // If GOOD request
         createPage(line);                           // Create a page
-
         std::cout << "[" << page.status_ << "] - "  // Show some information
                   << page.path_ << " ("             // about response
                   << page.contentType_ << ")\n";
-
         sendPage();                                 // Send the page
-    }
-    else {                                          // If BAD request
-        // send some kind of error message
     }
 }
 
 // ---------- cHandler Deconstructor ------------------------------------------
-cHandler::~cHandler() {
-    delete [] page.data.content;                    // Delete allocated content
-}
+cHandler::~cHandler() { delete [] page.data.content; }
 
 // ---------- Send a finnished page to the client -----------------------------
 void cHandler::sendPage() {
@@ -68,7 +60,6 @@ void cHandler::createPage(std::string l) {
             page.status_   = "404";                 // Set to 404
             page.path_     = "404.html";            // Set path
         }
-
         constData(page.status_);                    // Read const Page
         page.contentType_ = "text/html";            // Always same
     }
@@ -76,9 +67,6 @@ void cHandler::createPage(std::string l) {
 
 // ---------- cHandler: get path from REQUEST ----------------------------------
 std::string cHandler::parsePath(std::string l) {
-
-    std::cout << l << "\n";
-
     std::string::size_type start, stop;
     std::string result;
     string_map::iterator it;
@@ -161,9 +149,4 @@ void cHandler::constData(std::string s) {
     else {
         // Some kind of error
     }
-}
-
-// ---------- cHandler: Parse data (dynamic content) --------------------------
-void cHandler::parseData(char* d) {
-    // ...
 }
