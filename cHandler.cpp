@@ -69,7 +69,6 @@ void cHandler::createPage(std::string l) {
 std::string cHandler::parsePath(std::string l) {
     std::string::size_type start, stop;
     std::string result;
-    string_map::iterator it;
 
     start   = l.find_first_of(" ");                     // Start PATH
     stop    = l.find(" ", start + 1);                   // End of PATH
@@ -77,11 +76,6 @@ std::string cHandler::parsePath(std::string l) {
 
     if (result == "/")	result = "index.html";                       // Index
     else                result = l.substr((start+2),(stop-start-2)); // File
-
-    it = Webserver::routes.find(result);
-    if (it != Webserver::routes.end()) {
-        result = it->second;
-    }
 
     return result;                                      // Return PATH
 }
